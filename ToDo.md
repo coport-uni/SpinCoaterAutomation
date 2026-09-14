@@ -14,15 +14,26 @@ Reference: https://github.com/coport-uni/CommonClaude
 - Hooks: root `.claude/settings.json` runs the scripts straight from the
   submodule, so upstream hook fixes arrive with a pointer bump
 - Language profile: Python (`main` branch of CommonClaude, Ruff)
+- Windows fixes live in project wrapper `.claude/hooks/run-common-hook.sh`
+  (backslash path normalization, CR stripping); submodule stays untouched
+  (see LP §5)
 
 ### Tasks
 - [x] Initialize git repository (`main`)
 - [x] Add submodule `external/CommonClaude`
 - [x] Install hook dependency `jq` via winget
 - [x] Write root `CLAUDE.md` with import and project overrides
-- [ ] Write root `.claude/settings.json` wiring submodule hooks
+- [x] Write root `.claude/settings.json` wiring submodule hooks
 - [x] Add `.gitignore` (CommonClaude §13.1), `pyproject.toml` (Ruff, §6)
+- [x] Add `.gitattributes` forcing LF on `*.sh`
 - [x] Add `claude_test/README.md` index (§3)
-- [ ] Verify each hook with sample tool payloads on Windows Git Bash
-- [ ] Create GitHub repository and issue (needs user decision on remote)
-- [ ] Initial commit after verification
+- [x] Write `.claude/hooks/run-common-hook.sh` Windows wrapper
+- [x] Verify each hook with sample tool payloads on Windows Git Bash
+  (15/15 cases pass: fwd/backslash paths, secrets, CRLF, missing jq)
+- [ ] Install `ruff` (no real Python interpreter on host yet)
+- [x] Create GitHub repository `coport-uni/SpinCoaterAutomation`
+  (done by user)
+- [x] Initial commit and push (a924380, done by user)
+- [x] Create GitHub issue for this task (#1)
+- [ ] Commit `ToDo.md` progress and `LearnedPatterns.md` via branch + PR
+- [ ] Re-save `README.md` as UTF-8 (currently UTF-16 from PowerShell echo)
