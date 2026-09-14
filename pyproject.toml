@@ -1,2 +1,42 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "laurell-ws650-ctl"
+version = "0.0.1"
+description = "RS-232 control and monitoring for the Laurell WS-650 spin coater"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = ["pyserial>=3.5"]
+
+[project.optional-dependencies]
+analysis = ["numpy", "matplotlib"]
+dev = ["pytest", "pytest-cov", "ruff", "mypy", "types-pyserial"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.ruff]
 line-length = 80
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# CommonClaude §8 exempts claude_test/ from the 80-column limit.
+"claude_test/*" = ["E501"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-m 'not hardware'"
+markers = [
+    "hardware: needs the real WS-650 controller and an operator present",
+]
