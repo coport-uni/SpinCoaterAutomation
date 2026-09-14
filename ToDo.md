@@ -91,4 +91,5 @@ environment, (2) install hook tools, (3) grab one camera frame, and
 - [x] Verify: `ruff check`, `ruff format --check`, `mypy src`, `pytest`
 - [x] Bench check with operator present: open `COM16` receive-only via
   `SerialTransport`, confirm no TX and clean close (CommonClaude §5.1)
-- [ ] Commit per feature, push, open PR with Testing output, update issue
+- [x] Commit per feature, push, open PR with Testing output, update issue
+  (PR #4)
