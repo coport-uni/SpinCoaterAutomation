@@ -179,4 +179,12 @@ reception and try every known communication protocol.
 - [ ] Operator, power off: resistance DB9 pin 2 to pin 3, continuity
   black->board GND, green->SP3232E 14, yellow->13
 - [ ] No further transmit until the receive input idles at mark
+
+### Probe after TX/RX swap (user request 2026-09-15)
+- [x] Line check, CR/CRLF/ENQ x 8 baud rates, line check, C920 frames
+  (09:58-09:59 KST): no reply, echo gone, BREAK persists
+- [x] Correct the earlier "BREAK vanished mid-run" reading: the pattern
+  repeated exactly, so it is a sampling artefact of the probe
+- [ ] Operator: report the swapped pin assignment and which pins read
+  -8 V (black lead on which pin)
 - [x] Commit, push to PR #6, comment on issue #5

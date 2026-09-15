@@ -250,6 +250,39 @@ rather than at the protocol. Before any further transmit, with power off:
 2. Continuity black to board GND (reference §12 item 3).
 3. Continuity green to SP3232E pin 14 and yellow to pin 13.
 
+### Transmit probe after TX/RX swap (2026-09-15 09:58-09:59 KST)
+
+The operator judged TX and RX to be wired the wrong way round and
+swapped them. The resulting pin assignment was not reported. Same run as
+above (`debug_tx_probe.py`, CR / CRLF / ENQ, 8 baud rates, 8N1, 24
+sends), with a 5 s receive-only `debug_modem_lines.py` check before and
+after. Operator present. Log: `captures/tx_probe_20260915_095829/`.
+
+| Check | Result |
+|---|---|
+| Line check before (9600 8N1, 5 s) | BREAK, CTS/DSR/RI/CD low, 0 bytes |
+| Probe baselines | BREAK at 1200, 2400, 4800; none at 9600-115200 |
+| Probe replies | **0 bytes after all 24 sends, no FRAME errors** |
+| Line check after (5 s) | BREAK, 0 bytes |
+| Controller screen | Unchanged in C920 frames before and after |
+
+What changed with the swap: the one-`00`-per-sent-byte echo with FRAME
+errors at 1200-4800 baud is gone, so our transmit no longer couples into
+the receive input. What did not change: the receive input still reports
+BREAK, and the controller still does not answer CR, CRLF or ENQ.
+
+Correction to the previous section: the BREAK baseline pattern
+(present at 1200-4800, absent at 9600-115200) was identical in both
+probe runs, while the 5 s line checks at 9600 show BREAK every time. The
+absence at higher baud rates is therefore systematic, most likely in how
+the probe samples the flag in its short baseline window, and is not
+evidence that the line became stable mid-run.
+
+Operator note after the run: a reading of -8 V was seen; which pins it
+was measured between is not yet recorded. -8 V is a normal mark level
+(TIA-232 allows -5 V to -15 V) and is more likely the converter's own
+transmitter than the controller's SP3232EE (typically about -5.4 V).
+
 ## Open questions
 
 - Oscillator marking read as 19.6608M in a photo
