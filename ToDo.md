@@ -170,10 +170,13 @@ reception and try every known communication protocol.
   8N1; SAF-1 waived in-process only; needs `LAURELL_TX_ENABLED=1` and
   `--send`; records replies and comm error flags
 - [x] Ruff checks on the script
-- [ ] Run it: blocked by the Claude Code auto-mode classifier; user
-  said CR/CRLF/ENQ is too many, so the probe set and who runs it are
-  pending the user's decision
-- [ ] Resolve conflict: `claude_test/README.md` says a 09:38 KST run
-  showed no BREAK, but this session's 09:40 KST runs showed BREAK in
-  3 of 3
+- [x] Run it: first attempt blocked by the auto-mode classifier; user
+  then directed all of CR/CRLF/ENQ. Ran 09:47 KST, 24 sends: no
+  controller reply, screen unchanged; `00`+FRAME per sent byte at
+  1200-4800 is local TX coupling; BREAK returned by 09:49
+- [x] Resolve conflict: 09:38 "no BREAK" note in `claude_test/README.md`
+  kept with a correction citing the 09:40 and 09:49 BREAK runs
+- [ ] Operator, power off: resistance DB9 pin 2 to pin 3, continuity
+  black->board GND, green->SP3232E 14, yellow->13
+- [ ] No further transmit until the receive input idles at mark
 - [x] Commit, push to PR #6, comment on issue #5

@@ -211,6 +211,45 @@ transmit probe is still not met. Next checks, all without transmit:
    `debug_modem_lines.py`. BREAK gone: the green wire drives pin 2
    positive. BREAK stays: look at the converter side.
 
+### Transmit probe, CR / CRLF / ENQ (2026-09-15 09:47-09:48 KST)
+
+Operator-directed, SAF-1 waived for this run only
+(`claude_test/debug_tx_probe.py`). Wiring unchanged (green->2,
+yellow->3, black->5). Operator present, chuck empty, lid closed. 24 sends:
+CR `0d`, CRLF `0d 0a`, ENQ `05` at 1200-115200 baud, 8N1, each followed
+by 1.5 s of listening. Log: `captures/tx_probe_20260915_094740/`.
+
+| Baud | Baseline flags | After each probe |
+|---|---|---|
+| 1200, 2400 | BREAK | one `00` per sent byte, BREAK + FRAME |
+| 4800 | BREAK | CR: one `00`, BREAK + FRAME; CRLF, ENQ: nothing, no flags |
+| 9600-115200 | none | nothing, no flags |
+
+The controller screen and LEDs were identical in C920 frames before and
+after.
+
+Reading of the result:
+
+- **No reply from the controller at any baud rate.**
+- The `00` bytes are not replies. Each arrived 1.0-4.4 ms after the
+  transmit started, while one character at 1200 baud takes 8.3 ms, and
+  there was exactly one `00` per byte sent. Our own transmission is
+  coupling into the receive input while that input sits at space.
+- BREAK disappeared from about 09:47:52 until the end of the run, then
+  was back in a receive-only check at 09:49 KST (5 s, BREAK, 0 bytes).
+  The receive input is unstable, not fixed.
+- Consequently the 1200-4800 baud probes ran while replies could not be
+  received, and the 9600-115200 probes ran with the line apparently at
+  mark. Only the latter are a real negative result for CR / CRLF / ENQ.
+
+The coupling from pin 3 to pin 2, the identical 5.5 V readings on both
+pins, and the intermittent BREAK all point at the cable or grounding
+rather than at the protocol. Before any further transmit, with power off:
+
+1. Resistance DB9 pin 2 to pin 3 (a low value means the two lines touch).
+2. Continuity black to board GND (reference §12 item 3).
+3. Continuity green to SP3232E pin 14 and yellow to pin 13.
+
 ## Open questions
 
 - Oscillator marking read as 19.6608M in a photo
