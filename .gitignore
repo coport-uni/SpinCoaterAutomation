@@ -27,6 +27,12 @@ env/
 .DS_Store
 Thumbs.db
 
+# ===== Device captures =====
+# Raw captures can be large and may contain the device serial number
+# (spec WR-8). Copy representative samples into tests/fixtures/ instead.
+captures/*
+!captures/.gitkeep
+
 # ===== Claude Code =====
 .claude/settings.local.json
 

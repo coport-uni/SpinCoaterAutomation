@@ -37,3 +37,59 @@ Reference: https://github.com/coport-uni/CommonClaude
 - [x] Create GitHub issue for this task (#1)
 - [ ] Commit `ToDo.md` progress and `LearnedPatterns.md` via branch + PR
 - [ ] Re-save `README.md` as UTF-8 (currently UTF-16 from PowerShell echo)
+
+## Dev environment, camera check, and M0 scaffolding
+
+### Background
+User request (2026-09-14): read `docs/development_spec.md` and
+`docs/serial_protocol_reference.md`, confirm the USB serial converter and
+the Logitech camera are recognized, then (1) create a `laurell` conda
+environment, (2) install hook tools, (3) grab one camera frame, and
+(4) start milestone M0 through the normal ToDo / issue / branch flow.
+
+### Findings (2026-09-14, read-only enumeration)
+- Converter: Prolific PL2303GT, `COM16`, VID_067B PID_23A3, driver
+  Prolific 5.2.12.0, problem code 0. The spec's PL-2303 driver risk
+  (spec §11) does not apply to this chip.
+- `COM3` and `COM4` are Bluetooth links, not the spin coater.
+- Camera: Logitech HD Pro Webcam C920, VID_046D PID_08E5, `usbvideo`,
+  problem code 0. The host also exposes LGE laptop cameras and a
+  Mirametrix virtual camera, so the C920 must be selected by name.
+- `COM16` has not been opened; some drivers assert DTR/RTS on open
+  (reference §10), and no transport with the SAF-1 guard exists yet.
+- No Python on `PATH`; Miniconda exists at `C:\Users\swoho\miniconda3`.
+
+### Tasks: environment and camera (approved by user 2026-09-14)
+- [x] Enumerate serial and camera devices without opening them
+- [x] Create conda env `laurell` (Python 3.12, conda-forge) with
+  pyserial, opencv-python, pygrabber, numpy, matplotlib, pytest,
+  pytest-cov, ruff, mypy
+- [x] Install hook dependency `jq` via winget (already installed; VS Code
+  restart needed to pick up `PATH`, see LP §5)
+- [x] Put `ruff` on `PATH` for the lint hook (env `ruff` is not on `PATH`;
+  proposal: `winget install astral-sh.ruff`, awaiting confirmation)
+- [x] Grab one C920 frame with `claude_test/debug_camera_frame.py`
+- [x] Record the script in `claude_test/README.md`
+
+### Tasks: M0 scaffolding (spec §7 M0, §12 steps 1-4; awaiting confirmation)
+- [x] Create GitHub issue for this task (#3)
+- [x] Cut `feature/m0-scaffolding` from `main`
+- [x] Create spec §6 layout in this repository: `src/laurell/`, `tests/`,
+  `tests/fixtures/`, `analysis/notebooks/`, `analysis/scripts/`,
+  `captures/.gitkeep`
+- [x] Write `SAFETY.md` with spec §3 verbatim
+- [x] Write `docs/hardware_findings.md` from spec §4 plus the findings above
+- [x] Extend `pyproject.toml`: project metadata, dependencies, Ruff
+  (80 columns), mypy, pytest `hardware` marker excluded by default
+- [x] Define exception hierarchy (`LaurellError`, `TransportError`,
+  `TransmitBlockedError`, ...) per spec §7 M5 table
+- [x] Implement receive-only `SerialTransport` in
+  `src/laurell/transport.py` (DTR/RTS low on open, `write` raises
+  `TransmitBlockedError` unless `LAURELL_TX_ENABLED=1`, context manager,
+  SAFETY header comment)
+- [x] Add `tests/test_transport.py` with mocked pyserial
+- [x] Verify: `ruff check`, `ruff format --check`, `mypy src`, `pytest`
+- [x] Bench check with operator present: open `COM16` receive-only via
+  `SerialTransport`, confirm no TX and clean close (CommonClaude §5.1)
+- [x] Commit per feature, push, open PR with Testing output, update issue
+  (PR #4)
