@@ -126,7 +126,7 @@ reception and try every known communication protocol.
   all 32 combinations)
 - [x] Record results in `docs/hardware_findings.md` and
   `claude_test/README.md`
-- [ ] Commit, push, open PR, update issue
+- [x] Commit, push, open PR, update issue (PR #6, stacked on #4)
 - [ ] Record the new DB9 pin assignment from the operator
 - [ ] Operator: measure DB9 pin 2 vs pin 5 with the controller on
 - [ ] Capture 60 s while the operator presses non-motion keys
