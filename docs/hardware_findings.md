@@ -105,6 +105,28 @@ Next checks that need no transmit:
 3. Read the firmware version from the INFO screen through the C920
    (spec §11).
 
+## Receive checks after second rewiring (2026-09-15, operator present)
+
+The operator rewired the DB9 again before these runs. The pin assignment
+has still not been recorded.
+
+| Time (KST) | Run | Result |
+|---|---|---|
+| 09:09 | `bench_transport_open.py`, 9600 8N1, 10 s | 0 bytes; `dtr=False rts=False`; write blocked (SAF-1) |
+| 09:09-09:12 | `debug_passive_scan.py`, 1200-115200 baud x 8N1/8E1/8O1/7E1, 5 s each | 0 bytes in all 32 combinations; checksum self-test passed |
+| ~09:13 | `debug_modem_lines.py`, 10 s | CTS, DSR, RI, CD all `False` in 80 samples; no BREAK, FRAME, parity or overrun flags; 0 bytes |
+
+C920 frames before and after show the same "Select Process" screen and
+LEDs, so the controller did not react.
+
+What the modem-line probe adds: no BREAK flag means the receive input is
+not held at space, so it is at mark (idle RS-232, or an open input, which
+the converter's receiver also reads as mark). No modem input changed, so
+no device wire is visibly driving DB9 pin 1, 6, 8 or 9. From the PC side
+a correctly wired but silent controller and an unconnected pin 2 look
+identical. Only a voltage measurement or a known-good signal can
+separate the two.
+
 ## Open questions
 
 - Oscillator marking read as 19.6608M in a photo

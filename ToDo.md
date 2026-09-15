@@ -131,3 +131,14 @@ reception and try every known communication protocol.
 - [ ] Operator: measure DB9 pin 2 vs pin 5 with the controller on
 - [ ] Capture 60 s while the operator presses non-motion keys
 - [ ] Read firmware version from the INFO screen via the C920
+
+### Retry after second rewiring (user request 2026-09-15)
+- [x] Confirm `COM16` and C920 still enumerate (both OK)
+- [x] Receive-only bench check, 9600 8N1, 10 s (0 bytes, 09:09 KST)
+- [x] Passive scan, 32 combinations x 5 s (0 bytes, 09:09-09:12 KST)
+- [x] Add `claude_test/debug_modem_lines.py` and sample CTS/DSR/RI/CD and
+  comm error flags (all low, no flags, 0 bytes)
+- [x] Record results in `docs/hardware_findings.md` and
+  `claude_test/README.md`
+- [x] Run `ruff check` and `ruff format --check` on the new script
+- [x] Commit, push to PR #6, comment on issue #5
