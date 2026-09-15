@@ -256,3 +256,27 @@ with exploring an unknown serial protocol.
 - [x] Re-encode `README.md` to UTF-8: overwriting kept the old BOM-less
   UTF-16-LE encoding (see LP §5)
 - [x] Commit, push, open PR (PR #8, stacked on #6)
+
+## Merge investigation PRs and clean up branches
+
+### Background
+User request (2026-09-15): merge all open PRs into `main` and delete the
+branches that are already merged.
+
+### Decisions (2026-09-15)
+- CommonClaude §5.1 rule 4 forbids merging a PR whose Testing section
+  records NOT VERIFIED items. #4 met its M0 acceptance criteria; #6 and
+  #8 record NOT VERIFIED items. The user explicitly chose to merge all
+  three with the gate waived; the waiver is recorded as a comment on #6
+  and #8.
+- Merge commits (same as #2), in stack order #4 -> #6 -> #8, retargeting
+  each upper PR to `main` before its base branch is deleted.
+- Issue #5 stays open: the controller link is still not working.
+
+### Tasks
+- [x] Create GitHub issue for this task (#9)
+- [x] Delete `docs/harness-learned-patterns` on origin (merged via #2)
+- [x] Record the waiver on #6 and #8
+- [ ] Merge #4, retarget and merge #6, retarget and merge #8
+- [ ] Delete merged branches (remote and local), update local `main`
+- [ ] Verify `main` and branch lists; close #9
