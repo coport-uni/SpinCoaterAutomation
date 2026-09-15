@@ -187,4 +187,15 @@ reception and try every known communication protocol.
   repeated exactly, so it is a sampling artefact of the probe
 - [ ] Operator: report the swapped pin assignment and which pins read
   -8 V (black lead on which pin)
+
+### Wire resistance analysis (user request 2026-09-15)
+- [x] Record operator's wire-to-wire resistance table and interpret it:
+  G and B behave as one node (R-Y = R-G + G-Y), R and Y about 5 kΩ to
+  it, so R and Y are the likely signal pair
+- [ ] Operator: confirm whether "1" on G-B means short or over-range
+- [ ] Operator: G-B again with both cable ends unplugged
+- [ ] Operator: controller on, converter unplugged, R and Y against B
+  (about -5.4 V = device TXD, about 0 V = device RXD)
+- [ ] Rewire with power off: TXD->2, RXD->3, B->5, G unconnected; then
+  repeat the receive-only scan
 - [x] Commit, push to PR #6, comment on issue #5

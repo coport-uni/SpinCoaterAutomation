@@ -278,6 +278,53 @@ absence at higher baud rates is therefore systematic, most likely in how
 the probe samples the flag in its short baseline window, and is not
 evidence that the line became stable mid-run.
 
+### Wire-to-wire resistance (operator, 2026-09-15, after the swap)
+
+Handwritten table from the operator, measured between the four cable
+wires (R = red/pink, G = green, Y = yellow, B = black). Whether the
+device was powered off and the DB9 unplugged from the converter was not
+recorded.
+
+| Pair | Reading |
+|---|---|
+| R-G | 5.2 kΩ |
+| R-B | 5.2 kΩ |
+| R-Y | 9.6 kΩ |
+| G-Y | 4.4 kΩ |
+| B-Y | 4.4 kΩ |
+| G-B | "1" (both orders) |
+
+Interpretation, unconfirmed:
+
+- G and B read identically against every other wire (5.2 kΩ to R,
+  4.4 kΩ to Y), and R-Y = 5.2 + 4.4 = 9.6 kΩ exactly. That is what a
+  plain resistor network gives if G and B are the same node. The "1"
+  therefore most likely means about 1 Ω (a short), not an over-range
+  display. If it were open, no linear network could produce these
+  numbers.
+- R and Y each have about 5 kΩ to the G/B node, inside the 3-7 kΩ
+  RS-232 receiver input range (`docs/serial_protocol_reference.md` §1).
+  With power off, an SP3232E transmitter output can also read a few kΩ,
+  so resistance alone does not tell which of R and Y is TXD and which
+  is RXD.
+- This contradicts the spec §4 colour map (green = T1OUT, red = unknown,
+  possibly power). Either green is really a ground (or shorted to black
+  in the cable or the hand-made DB9), or the colours differ at this end
+  of the cable. A device TXD shorted to ground would also explain why
+  no data ever arrived.
+
+Checks that settle it:
+
+1. Confirm the meter's "1": a digit at the far left with nothing else
+   is over-range (open); "1" or "0.001" in the Ω range is a short.
+2. Unplug both cable ends and measure G-B again. Still a short: inside
+   the cable or connector. Open: on the controller board.
+3. Converter unplugged, controller on, receive-only: measure R and Y
+   against B. About -5.4 V is the device TXD (to DB9 pin 2); about 0 V
+   is the device RXD receiver input (to DB9 pin 3). B goes to pin 5,
+   and G stays unconnected until the short is explained. Rewire only
+   with power off (SAF-7).
+
 Operator note after the run: a reading of -8 V was seen; which pins it
 was measured between is not yet recorded. -8 V is a normal mark level
 (TIA-232 allows -5 V to -15 V) and is more likely the converter's own
