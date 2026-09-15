@@ -127,6 +127,49 @@ a correctly wired but silent controller and an unconnected pin 2 look
 identical. Only a voltage measurement or a known-good signal can
 separate the two.
 
+## Receive checks after third rewiring (2026-09-15, operator present)
+
+The operator rewired the DB9 a third time and reported this assignment:
+green (device TXD, SP3232E pin 14 T1OUT) to DB9 pin 2, yellow (device
+RXD, pin 13 R1IN) to DB9 pin 3, black to DB9 pin 5. The pink/red wire is
+not connected. A multimeter lead is visible next to the connector in the
+C920 frames.
+
+| Time (KST) | Run | Result |
+|---|---|---|
+| 09:21 | `debug_modem_lines.py`, 10 s | CTS, DSR, RI, CD all `False` in 81 samples; **BREAK flag set**; 0 bytes |
+| 09:21-09:24 | `debug_passive_scan.py`, 32 combinations x 5 s | 0 bytes in all combinations; checksum self-test passed |
+
+The controller screen was unchanged before and after.
+
+The BREAK flag is new. Windows sets it when the receive input stays at
+space (positive voltage) for longer than a character. An idle RS-232
+transmitter sits at mark (negative), and an open input reads as mark, so
+DB9 pin 2 is now held positive, which an idle TXD never does
+(`docs/serial_protocol_reference.md` §1). With the green wire reported
+on pin 2, the candidate causes, none confirmed, are:
+
+- The transceiver output is really at space: the controller holds the
+  TTL input T1IN (SP3232E pin 11) low, for example because its UART
+  transmit is disabled. In that case this is the first wiring where the
+  device TXD actually reaches the converter.
+- Black is not signal ground, so pin 2 is measured against a floating
+  reference.
+- The green wire does not reach T1OUT at this end of the cable.
+
+With pin 2 held at space no reply could be received, so transmit probing
+in this wiring cannot show anything. Decision (operator, 2026-09-15):
+fix the receive path first; no transmit until pin 2 idles at mark.
+
+Measurements that separate the candidates, controller on:
+
+| Probe (black lead / red lead) | Idle TXD expected | Meaning if different |
+|---|---|---|
+| DB9 pin 5 / DB9 pin 2 | about -5 V | about +5 V: transceiver output at space (first candidate); near 0 V: not connected |
+| DB9 pin 5 / DB9 pin 3 | about -5 V (converter TXD idle) | near 0 V: pin 5 is not a common ground |
+| Board GND / SP3232E pin 14 | about -5 V | Compare with the DB9 pin 2 reading to check the green wire |
+| Board GND / SP3232E pin 11 | about +3.3 V (TTL idle high) | near 0 V: the controller holds its UART TX low |
+
 ## Open questions
 
 - Oscillator marking read as 19.6608M in a photo

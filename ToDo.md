@@ -142,3 +142,19 @@ reception and try every known communication protocol.
   `claude_test/README.md`
 - [x] Run `ruff check` and `ruff format --check` on the new script
 - [x] Commit, push to PR #6, comment on issue #5
+
+### Retry after third rewiring (user request 2026-09-15)
+- [x] Confirm `COM16` and C920 still enumerate (both OK)
+- [x] Modem-line probe, 10 s (all low, BREAK flag set, 0 bytes, 09:21 KST)
+- [x] Passive scan, 32 combinations x 5 s (0 bytes, 09:21-09:24 KST)
+- [x] Record results in `docs/hardware_findings.md`
+- [x] User asked to also transmit probes and watch for replies or error
+  codes; this conflicts with SAF-1 (no transmit before M3). Decision
+  (user, 2026-09-15): fix the receive path first, no transmit yet. For a
+  later send test the user picked all 8 baud rates at 8N1 and confirmed
+  the bench is ready (chuck empty, lid closed, STOP in reach)
+- [x] Record the DB9 pin assignment (green TXD->2, yellow RXD->3,
+  black->5, pink/red unconnected)
+- [ ] Operator: measure DB9 pin 2 and pin 3 against pin 5, then SP3232E
+  pin 14 and pin 11 against board GND (table in hardware_findings.md)
+- [x] Commit, push to PR #6, comment on issue #5
