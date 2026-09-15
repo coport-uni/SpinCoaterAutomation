@@ -325,6 +325,30 @@ Checks that settle it:
    and G stays unconnected until the short is explained. Rewire only
    with power off (SAF-7).
 
+### Yellow on DB9 pin 2 (2026-09-15 10:26-10:30 KST)
+
+The operator moved the yellow wire to DB9 pin 2. Where red, green and
+black sit now was not reported. Operator present.
+
+| Time (KST) | Run | Result |
+|---|---|---|
+| 10:26 | `debug_modem_lines.py`, 5 s | **No BREAK** (first time since the third rewiring), CTS/DSR/RI/CD low, 0 bytes |
+| 10:26-10:29 | `debug_passive_scan.py`, 32 combinations x 5 s | 0 bytes in all combinations |
+| 10:29 | `debug_tx_probe.py`, CR/CRLF/ENQ x 8 baud rates, 8N1 | **0 replies in 24 sends**, no error flags, BREAK absent in every baseline |
+| 10:30 | `debug_modem_lines.py`, 5 s | No BREAK, 0 bytes |
+
+Logs: `captures/passive_scan_20260915_102632/`,
+`captures/tx_probe_20260915_102914/`. Controller screen unchanged in the
+C920 frames before and after.
+
+With yellow on pin 2 the converter's receive input is no longer held at
+space. That fits both an idle device TXD (about -5.4 V) and a receiver
+input (about 0 V through its own 5 kΩ), because the converter reads 0 V
+as mark too. The receive-only data cannot tell these apart. The absent
+reply has three candidate causes: yellow is the device RXD, not TXD; the
+device RXD is not on DB9 pin 3; or the controller does not answer
+CR/CRLF/ENQ.
+
 Operator note after the run: a reading of -8 V was seen; which pins it
 was measured between is not yet recorded. -8 V is a normal mark level
 (TIA-232 allows -5 V to -15 V) and is more likely the converter's own

@@ -198,4 +198,12 @@ reception and try every known communication protocol.
   (about -5.4 V = device TXD, about 0 V = device RXD)
 - [ ] Rewire with power off: TXD->2, RXD->3, B->5, G unconnected; then
   repeat the receive-only scan
+
+### Yellow on DB9 pin 2 (user request 2026-09-15)
+- [x] Line check, 32-combination scan, CR/CRLF/ENQ probe, line check,
+  C920 frames (10:26-10:30 KST): BREAK gone, 0 bytes, 0 / 24 replies
+- [ ] Operator: report where red, green and black are now
+- [ ] Operator: converter unplugged, controller on, yellow and red
+  against black (about -5.4 V = TXD, about 0 V = RXD)
+- [ ] If yellow is RXD: power off, red->2, yellow->3, then retest
 - [x] Commit, push to PR #6, comment on issue #5
