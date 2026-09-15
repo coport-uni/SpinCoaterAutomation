@@ -277,6 +277,12 @@ branches that are already merged.
 - [x] Create GitHub issue for this task (#9)
 - [x] Delete `docs/harness-learned-patterns` on origin (merged via #2)
 - [x] Record the waiver on #6 and #8
-- [ ] Merge #4, retarget and merge #6, retarget and merge #8
-- [ ] Delete merged branches (remote and local), update local `main`
-- [ ] Verify `main` and branch lists; close #9
+- [x] Merge #4, retarget and merge #6, retarget and merge #8 (merge
+  commits, 2026-09-15; #3 and #7 closed by the merges, #5 kept open)
+- [x] Delete merged branches (remote and local), update local `main`
+  (`feature/m0-scaffolding`, `feature/passive-protocol-scan`,
+  `docs/comm-investigation-summary`; each head confirmed in `main` first)
+- [x] Verify `main`: pytest 32 passed, mypy and ruff clean; only `main`
+  remains locally and on origin
+- [x] Record these ticks through a short-lived branch and PR, then delete
+  that branch and close #9
