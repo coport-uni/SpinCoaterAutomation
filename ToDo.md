@@ -36,7 +36,8 @@ Reference: https://github.com/coport-uni/CommonClaude
 - [x] Initial commit and push (a924380, done by user)
 - [x] Create GitHub issue for this task (#1)
 - [ ] Commit `ToDo.md` progress and `LearnedPatterns.md` via branch + PR
-- [ ] Re-save `README.md` as UTF-8 (currently UTF-16 from PowerShell echo)
+- [x] Re-save `README.md` as UTF-8 (currently UTF-16 from PowerShell echo)
+  (done in PR #8)
 
 ## Dev environment, camera check, and M0 scaffolding
 
