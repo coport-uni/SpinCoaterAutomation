@@ -254,4 +254,4 @@ with exploring an unknown serial protocol.
 - [x] Post summary on issue #5, refresh PR #6 title and description
 - [x] Re-encode `README.md` to UTF-8: overwriting kept the old BOM-less
   UTF-16-LE encoding (see LP §5)
-- [ ] Commit, push, open PR
+- [x] Commit, push, open PR (PR #8, stacked on #6)
