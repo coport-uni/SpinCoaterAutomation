@@ -205,5 +205,16 @@ reception and try every known communication protocol.
 - [ ] Operator: report where red, green and black are now
 - [ ] Operator: converter unplugged, controller on, yellow and red
   against black (about -5.4 V = TXD, about 0 V = RXD)
-- [ ] If yellow is RXD: power off, red->2, yellow->3, then retest
+- [x] If yellow is RXD: power off, red->2, yellow->3, then retest
+  (done by operator without the voltage check)
+
+### Red on DB9 pin 2, yellow on pin 3 (user request 2026-09-15)
+- [x] Line check, 32-combination scan, CR/CRLF/ENQ probe, line check,
+  C920 frames (10:35-10:39 KST): no BREAK, 0 bytes, 0 / 24 replies
+- [ ] Loopback: controller cable unplugged, short converter DB9 2-3, run
+  `debug_tx_probe.py` (proves the PC side)
+- [ ] Operator: controller on, converter unplugged, red and yellow
+  against black and against green
+- [ ] Browse EDIT MODE / INFO on the C920 for remote or baud settings
+  and the firmware version
 - [x] Commit, push to PR #6, comment on issue #5

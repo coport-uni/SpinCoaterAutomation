@@ -349,6 +349,44 @@ reply has three candidate causes: yellow is the device RXD, not TXD; the
 device RXD is not on DB9 pin 3; or the controller does not answer
 CR/CRLF/ENQ.
 
+### Red on DB9 pin 2, yellow on pin 3 (2026-09-15 10:35-10:39 KST)
+
+The operator swapped red and yellow, so red is on DB9 pin 2 and yellow
+on pin 3. Black and green positions were not reported. Operator present.
+
+| Time (KST) | Run | Result |
+|---|---|---|
+| 10:35 | `debug_modem_lines.py`, 5 s | No BREAK, CTS/DSR/RI/CD low, 0 bytes |
+| 10:35-10:38 | `debug_passive_scan.py`, 32 combinations x 5 s | 0 bytes in all combinations |
+| 10:38 | `debug_tx_probe.py`, CR/CRLF/ENQ x 8 baud rates, 8N1 | **0 replies in 24 sends**, no error flags |
+| 10:39 | `debug_modem_lines.py`, 5 s | No BREAK, 0 bytes |
+
+Logs: `captures/passive_scan_20260915_103552/`,
+`captures/tx_probe_20260915_103834/`. Controller screen unchanged in the
+C920 frames before and after.
+
+Both orientations of the red/yellow pair now give the same result: a
+quiet line, no data, no reply. Swapping them further cannot help. What
+remains, none confirmed:
+
+- The PC side does not work end to end. Nothing has ever proven that
+  COM16, the PL2303GT and the scripts receive what they send.
+- Signal ground is not common: black on pin 5 is not the controller's
+  ground, or green is the ground and black is not.
+- The controller ignores CR/CRLF/ENQ or has remote communication
+  disabled in its menus, so it stays silent even when wired correctly.
+
+Next checks in order:
+
+1. Loopback with the controller cable unplugged: short DB9 pins 2 and 3
+   on the converter and run `debug_tx_probe.py`. Every probe should echo
+   back at every baud rate. This proves the PC side and involves no
+   device.
+2. Controller on, converter unplugged: red and yellow against black,
+   then against green (about -5.4 V marks the device TXD and its ground).
+3. Look through the controller's EDIT MODE and INFO screens on the C920
+   for a remote, serial or baud rate setting and the firmware version.
+
 Operator note after the run: a reading of -8 V was seen; which pins it
 was measured between is not yet recorded. -8 V is a normal mark level
 (TIA-232 allows -5 V to -15 V) and is more likely the converter's own
