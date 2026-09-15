@@ -3,6 +3,61 @@
 Facts about the device and the host link. Unconfirmed items are filled in
 by bench measurement, not by inference.
 
+## Summary (as of 2026-09-15 10:40 KST)
+
+**No communication with the controller has been established yet.** The
+controller has never sent a byte that was received, and it has not
+answered any probe. The sections below are the chronological record;
+this summary is derived from them and from `captures/`.
+
+### Totals
+
+| Kind of run | Runs | Scope | Bytes from the controller |
+|---|---|---|---|
+| Receive-only scan (`debug_passive_scan.py`) | 5 | 32 baud/format combinations each, 5 s each (160 in total) | 0 |
+| Transmit probe (`debug_tx_probe.py`) | 5 | CR, CRLF, ENQ x 8 baud rates, 8N1 (120 sends in total) | 0 |
+| Line check (`bench_transport_open.py`, `debug_modem_lines.py`) | 14 with console output kept, plus 2 noted without output (09:38, 09:49) | 3-10 s each at 9600 8N1 | 0 |
+
+The only bytes ever received were 9 `00` bytes in the 09:47 probe run.
+They arrived faster than a single character could be sent, one per byte
+transmitted, so they are our own transmission leaking into the receive
+input, not a reply.
+
+### Wiring configurations tried
+
+| Time (2026-09-15 KST) | DB9 wiring | Receive line state | Result |
+|---|---|---|---|
+| 2026-09-14 17:29 | Initial, not recorded | Not checked | 0 bytes |
+| 08:53 | Rewire 1, not recorded | Not checked | 0 bytes |
+| 09:09 | Rewire 2, not recorded | Idle | 0 bytes |
+| 09:21 | Green->2, yellow->3, black->5, red open | BREAK (held positive) | 0 bytes; probe got only the `00` echo |
+| 09:54 | TX/RX swapped, not recorded | BREAK | 0 replies; echo gone |
+| 10:26 | Yellow->2, others not recorded | Idle | 0 bytes, 0 replies |
+| 10:35 | Red->2, yellow->3, others not recorded | Idle | 0 bytes, 0 replies |
+
+### What is established
+
+- The PL2303GT converter enumerates as `COM16` with its vendor driver;
+  the C920 camera reads the controller LCD.
+- The transmit safety gate in `src/laurell/` works (unit tests and
+  bench).
+- Wire resistance: green and black behave as one node; red and yellow
+  each sit about 5 kΩ from it, typical of an RS-232 receiver input. This
+  contradicts the colour map in `docs/development_spec.md` §4.
+- Red and yellow in either order on pins 2 and 3 give a quiet line and
+  no reply.
+
+### Open, in the order to check
+
+1. Loopback on the converter alone (DB9 pins 2 and 3 shorted, controller
+   unplugged) to prove the PC side end to end. Never done.
+2. Controller on, converter unplugged: red and yellow against black and
+   against green, to find the controller TXD (about -5.4 V) and the real
+   ground.
+3. Controller menus (EDIT MODE, INFO): remote/serial settings, firmware.
+4. If all of that is fine: the controller may need a command set that is
+   not public; ask Laurell support (spec §11).
+
 ## Device
 
 Laurell WS-650MZ-23NPP/LITE, 650 Series Controller, board P/N 15000018
@@ -257,6 +312,12 @@ swapped them. The resulting pin assignment was not reported. Same run as
 above (`debug_tx_probe.py`, CR / CRLF / ENQ, 8 baud rates, 8N1, 24
 sends), with a 5 s receive-only `debug_modem_lines.py` check before and
 after. Operator present. Log: `captures/tx_probe_20260915_095829/`.
+
+An earlier run of the same probe exists at 09:54 KST
+(`captures/tx_probe_20260915_095442/`, notes: "operator swapped TX/RX
+wiring"). It was found in `captures/` while writing the summary and was
+not reported at the time: 24 sends, 0 bytes received. It agrees with the
+09:58 run below.
 
 | Check | Result |
 |---|---|
