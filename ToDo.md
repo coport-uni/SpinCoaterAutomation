@@ -93,3 +93,41 @@ environment, (2) install hook tools, (3) grab one camera frame, and
   `SerialTransport`, confirm no TX and clean close (CommonClaude §5.1)
 - [x] Commit per feature, push, open PR with Testing output, update issue
   (PR #4)
+
+## Passive protocol scan after rewiring
+
+### Background
+User request (2026-09-15): the operator changed the DB9 wiring; retry
+reception and try every known communication protocol.
+
+### Decisions (2026-09-15)
+- Interpreted as receive-only. SAF-1 forbids any transmit before M3, so
+  request/response probing (CR, CRLF, ENQ, Modbus queries; spec M4) is
+  not attempted.
+- The scan is an exploratory script in `claude_test/`, not the M1
+  `baudscan.py`, because M0 (PR #4) is not merged yet (WR-1). The branch
+  is stacked on `feature/m0-scaffolding` so it can use `SerialTransport`.
+
+### Tasks
+- [x] Re-run receive-only bench check after rewiring (9600 8N1, 10 s,
+  C920 frames before and after): 0 bytes, controller screen unchanged
+- [x] Create GitHub issue for this task (#5)
+- [x] Cut `feature/passive-protocol-scan` from `feature/m0-scaffolding`
+- [ ] Write `claude_test/debug_passive_scan.py`: 8 baud rates (1200 to
+  115200) x 4 formats (8N1, 8E1, 8O1, 7E1), 5 s each, JSONL per spec M1,
+  shape checks (ASCII line, STX/ETX, Modbus RTU CRC, fixed-length binary,
+  repeated sequences), checksum search per reference §8
+- [x] Self-test checksum implementations against published check values
+- [x] Run `ruff check` and `ruff format --check` on the script
+- [x] Validate the analyzer on synthetic Modbus RTU, ASCII-line and
+  STX/ETX+XOR8 captures; add `--reanalyze` (found and fixed two bugs,
+  see LP §2)
+- [x] Run the scan with the operator present, no transmit (0 bytes in
+  all 32 combinations)
+- [x] Record results in `docs/hardware_findings.md` and
+  `claude_test/README.md`
+- [ ] Commit, push, open PR, update issue
+- [ ] Record the new DB9 pin assignment from the operator
+- [ ] Operator: measure DB9 pin 2 vs pin 5 with the controller on
+- [ ] Capture 60 s while the operator presses non-motion keys
+- [ ] Read firmware version from the INFO screen via the C920

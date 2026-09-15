@@ -7,6 +7,25 @@
 
 ## §2. Solved Gotchas
 
+### Stripping CR/LF from binary frames hides checksums
+- **Problem**: The passive-scan checksum search missed CRC-16/MODBUS on
+  synthetic frames whose CRC was valid.
+- **Cause**: `frame.rstrip(b"\r\n")` removed CRC bytes equal to `0x0D`
+  (two of six synthetic trailers were `94 0d` and `64 0d`).
+- **Fix**: Strip terminators only when splitting ASCII lines; pass
+  idle-split and STX frames through unchanged.
+- **Rule**: Never strip text terminators from frames that may be binary.
+  (from ToDo#3)
+
+### A lone STX byte fakes an STX/ETX frame
+- **Problem**: Modbus RTU data was also labelled `stx_etx (1 frames)`.
+- **Cause**: A register value `0x02` followed later by `0x03` forms one
+  "frame" with a 100 % ETX ratio.
+- **Fix**: Require at least `min_frames` STX frames before reporting the
+  shape.
+- **Rule**: Always require several independent frames before naming a
+  protocol shape. (from ToDo#3)
+
 ## §3. Library Quirks
 
 ### jq on Windows emits CRLF
@@ -38,6 +57,16 @@
   documents are never rewritten. (from ToDo#2)
 
 ## §4. Workflow Lessons
+
+### Validate an analyzer on synthetic data before trusting a null result
+- **Problem**: A scan that finds nothing is uninformative if the
+  analyzer itself is broken.
+- **Cause**: Real captures give no ground truth yet.
+- **Fix**: Feed known Modbus RTU, ASCII line and STX/ETX+XOR frames
+  through `analyze()` and `--reanalyze` first; two bugs were found this
+  way.
+- **Rule**: Always run protocol analysis code against synthetic frames
+  with known answers before running it on the device. (from ToDo#3)
 
 ## §5. Environment Specifics
 
