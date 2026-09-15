@@ -71,6 +71,40 @@ Possible causes, none confirmed:
 - The device TXD is not on DB9 pin 2, or signal ground is not on pin 5.
 - The capture window of 3 s is shorter than the status period.
 
+## Receive checks after rewiring (2026-09-15, operator present)
+
+The operator changed the DB9 wiring before these runs. The new pin
+assignment has not been recorded yet.
+
+| Time (KST) | Run | Result |
+|---|---|---|
+| 08:53 | `bench_transport_open.py`, 9600 8N1, 10 s | 0 bytes; `dtr=False rts=False`; write blocked (SAF-1); screen unchanged |
+| 08:57-09:00 | `debug_passive_scan.py`, 1200-115200 baud x 8N1/8E1/8O1/7E1, 5 s each | 0 bytes in all 32 combinations; screen unchanged before and after |
+
+Before the scan, the checksum routines matched the published check values
+for `123456789`, and the analyzer correctly identified synthetic Modbus
+RTU (CRC-16/MODBUS), ASCII-line and STX/ETX+XOR8 captures. The null result
+is therefore not an analysis failure.
+
+Across about 170 s of listening the receive line produced no bytes at
+all. Serial parameters cannot explain that: start bits on an active line
+normally produce bytes at any baud rate or format, correct or not. The
+problem lies before protocol decoding. Either no RS-232 signal reaches
+DB9 pin 2 with ground on pin 5, or the controller does not transmit in
+its current state.
+
+Next checks that need no transmit:
+
+1. With the controller on, measure DB9 pin 2 against pin 5 at the
+   converter end. An idle RS-232 line reads about -5 V from this
+   transceiver (`docs/serial_protocol_reference.md` §1.1); 0 V means the
+   device TXD or ground does not reach those pins.
+2. Capture for 60 s at any single setting while the operator presses
+   non-motion keys (arrows, SELECT PROCESS, INFO). Line activity shows up
+   regardless of baud rate.
+3. Read the firmware version from the INFO screen through the C920
+   (spec §11).
+
 ## Open questions
 
 - Oscillator marking read as 19.6608M in a photo
