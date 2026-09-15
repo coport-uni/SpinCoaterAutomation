@@ -96,6 +96,16 @@
 - **Rule**: Always restart the editor after installing a hook
   dependency. (from ToDo#1)
 
+### Overwriting a UTF-16 file keeps UTF-16
+- **Problem**: The rewritten `README.md` was saved as BOM-less
+  UTF-16-LE; `file` reported "data" and `grep` found nothing.
+- **Cause**: The original README had been created by PowerShell `echo`
+  as UTF-16, and overwriting it kept that encoding.
+- **Fix**: Re-encode with Python:
+  `read_bytes().decode("utf-16-le")`, then write UTF-8 with LF endings.
+- **Rule**: Always run `file <path>` after overwriting a file that was
+  not created as UTF-8. (from ToDo#4)
+
 ### Bench host has no Python on PATH
 - **Problem**: `python` resolves to the Microsoft Store stub.
 - **Cause**: Python is only installed through Miniconda.

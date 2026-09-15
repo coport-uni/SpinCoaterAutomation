@@ -113,7 +113,7 @@ reception and try every known communication protocol.
   C920 frames before and after): 0 bytes, controller screen unchanged
 - [x] Create GitHub issue for this task (#5)
 - [x] Cut `feature/passive-protocol-scan` from `feature/m0-scaffolding`
-- [ ] Write `claude_test/debug_passive_scan.py`: 8 baud rates (1200 to
+- [x] Write `claude_test/debug_passive_scan.py`: 8 baud rates (1200 to
   115200) x 4 formats (8N1, 8E1, 8O1, 7E1), 5 s each, JSONL per spec M1,
   shape checks (ASCII line, STX/ETX, Modbus RTU CRC, fixed-length binary,
   repeated sequences), checksum search per reference §8
@@ -218,3 +218,40 @@ reception and try every known communication protocol.
 - [ ] Browse EDIT MODE / INFO on the C920 for remote or baud settings
   and the firmware version
 - [x] Commit, push to PR #6, comment on issue #5
+
+## Summarize the communication investigation
+
+### Background
+User request (2026-09-15): organize all experiments so far on GitHub and
+in the documents; write `README.md` for readers who are not familiar
+with exploring an unknown serial protocol.
+
+### Decisions (2026-09-15)
+- README is written in English (CommonClaude §2 language rule) in plain
+  terms, with a short serial-communication primer and glossary.
+- Branch `docs/comm-investigation-summary` is stacked on
+  `feature/passive-protocol-scan` because it documents scripts that only
+  exist there.
+- Every number is taken from `captures/*/session.json` and
+  `events.jsonl`, not from memory.
+
+### Tasks
+- [x] Create GitHub issue for this task (#7)
+- [x] Cut `docs/comm-investigation-summary` from
+  `feature/passive-protocol-scan`
+- [x] Tally all captures: 5 receive-only scans (160 combinations,
+  0 bytes); 5 transmit probe runs (120 sends, 0 controller replies; the
+  only received bytes are the 9 `00` echoes at 09:47)
+- [x] Found an unrecorded probe run at 09:54 KST
+  (`captures/tx_probe_20260915_095442/`, 24 sends, 0 bytes); add it to
+  `docs/hardware_findings.md`
+- [x] Add a summary section at the top of `docs/hardware_findings.md`
+- [x] Rewrite `README.md` as UTF-8 for newcomers (closes the open
+  "re-save README.md as UTF-8" item from the harness task)
+- [x] Check every README command and claim against the repository
+  (pytest 32 passed, mypy and ruff clean, self-test, reanalyze, tx dry
+  run and script `--help` all run; no port opened)
+- [x] Post summary on issue #5, refresh PR #6 title and description
+- [x] Re-encode `README.md` to UTF-8: overwriting kept the old BOM-less
+  UTF-16-LE encoding (see LP §5)
+- [ ] Commit, push, open PR
