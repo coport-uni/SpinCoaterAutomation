@@ -170,6 +170,47 @@ Measurements that separate the candidates, controller on:
 | Board GND / SP3232E pin 14 | about -5 V | Compare with the DB9 pin 2 reading to check the green wire |
 | Board GND / SP3232E pin 11 | about +3.3 V (TTL idle high) | near 0 V: the controller holds its UART TX low |
 
+### Operator voltage readings (2026-09-15, before 09:40 KST)
+
+| Probe | Reported | Sign |
+|---|---|---|
+| DB9 pin 5 / DB9 pin 2 | 5.5 V | not stated |
+| DB9 pin 5 / DB9 pin 3 | 5.5 V | not stated |
+
+Whether the port was open during the reading was not recorded.
+
+Receive-only cross-check at 09:40 KST, 3 runs x 5 s with
+`debug_modem_lines.py`: **BREAK in every run**, CTS/DSR/RI/CD low,
+0 bytes. The converter's receiver is sign-sensitive, so a persistent
+BREAK means its input sees pin 2 at space (positive) the whole time.
+The earlier BREAK was therefore not caused by a probe touching the line.
+The previous wiring (09:13) showed no BREAK, so the current wiring
+causes it.
+
+The readings do not fit together cleanly:
+
+- If both readings are +5.5 V, pin 2 matches the BREAK flag, but pin 3
+  would mean the converter's own idle TXD is at space, which a PL2303
+  converter does not do on its own. That points to a wrong reference:
+  black on pin 5 may not be common signal ground.
+- If both are -5.5 V (sign dropped or leads swapped), pin 3 is a normal
+  idle TXD, but then pin 2 would be at mark and BREAK should not appear.
+- +5.5 V is also the typical level of the SP3232E V+ charge-pump rail
+  (pin 2), so a wire that lands on a rail instead of T1OUT would read
+  the same.
+
+Conclusion: pin 2 does not idle at mark, so the condition for the
+transmit probe is still not met. Next checks, all without transmit:
+
+1. Repeat both readings noting the sign, with black lead on DB9 pin 5,
+   while `debug_modem_lines.py --seconds 60` holds the port open.
+2. Power off everything (SAF-7) and check continuity: black to board
+   GND (expect 0 ohm, reference §12 item 3), green to SP3232E pin 14,
+   yellow to SP3232E pin 13.
+3. Power off, move green off DB9 pin 2, power on, rerun
+   `debug_modem_lines.py`. BREAK gone: the green wire drives pin 2
+   positive. BREAK stays: look at the converter side.
+
 ## Open questions
 
 - Oscillator marking read as 19.6608M in a photo

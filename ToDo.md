@@ -155,6 +155,25 @@ reception and try every known communication protocol.
   the bench is ready (chuck empty, lid closed, STOP in reach)
 - [x] Record the DB9 pin assignment (green TXD->2, yellow RXD->3,
   black->5, pink/red unconnected)
-- [ ] Operator: measure DB9 pin 2 and pin 3 against pin 5, then SP3232E
-  pin 14 and pin 11 against board GND (table in hardware_findings.md)
+- [x] Operator: measure DB9 pin 2 and pin 3 against pin 5 (both 5.5 V,
+  sign not stated)
+- [x] Receive-only cross-check 09:40 KST, 3 x 5 s: BREAK every run, so
+  pin 2 is at space; transmit condition still not met
+- [ ] Operator: repeat readings with sign while the port is held open
+- [ ] Operator, power off: continuity black->board GND, green->SP3232E
+  pin 14, yellow->pin 13
+- [ ] Operator: lift green off DB9 pin 2 and rerun the modem-line probe
+- [ ] SP3232E pin 14 and pin 11 against board GND
+
+### Transmit probe (user request 2026-09-15, overrides "fix RX first")
+- [x] Write `claude_test/debug_tx_probe.py`: allowlist CR, CRLF, ENQ;
+  8N1; SAF-1 waived in-process only; needs `LAURELL_TX_ENABLED=1` and
+  `--send`; records replies and comm error flags
+- [x] Ruff checks on the script
+- [ ] Run it: blocked by the Claude Code auto-mode classifier; user
+  said CR/CRLF/ENQ is too many, so the probe set and who runs it are
+  pending the user's decision
+- [ ] Resolve conflict: `claude_test/README.md` says a 09:38 KST run
+  showed no BREAK, but this session's 09:40 KST runs showed BREAK in
+  3 of 3
 - [x] Commit, push to PR #6, comment on issue #5
